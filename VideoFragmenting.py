@@ -5,7 +5,7 @@ import numpy as np
 import sys, os
 import signal, time
 
-# This script reads videos 1.avi through 200.avi at the rate of 30 frames/sec and converts them a bunch of image files.
+# This script reads videos 1.avi through 600.avi at the rate of 30 frames/sec and converts them into a bunch of image files.
 # Each image is a single frame from the video.
 
 video = 1
