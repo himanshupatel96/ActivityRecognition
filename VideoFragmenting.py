@@ -29,7 +29,7 @@ def load_fragment_store(load_path, store_path, total_videos):
 		while True:
 			flag, frame = cap.read()
 			if flag:
-				cv2.imwrite(store_path+str(vid)+'-'+str(image)+'.png', frame)
+				cv2.imwrite(store_path+str(vid)+'-'+str(image)+'.jpeg', frame)
 				image += 1
 				pos_frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
 
@@ -44,6 +44,9 @@ def load_fragment_store(load_path, store_path, total_videos):
 			if cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES) == cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT):
 				# If all the frames are read, then end the loop
 				break
+			if cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES) >= 300:
+				# If all the frames are read, then end the loop
+				break
 
 		progress = ('█'*(vid/div))+(' '*((len(total_videos) - vid)/div))
 		sys.stdout.write("\rVideo Processing in progress: %s | %.2f %s"%(progress, (vid*100.0)/len(total_videos), '%'))
@@ -52,23 +55,24 @@ def load_fragment_store(load_path, store_path, total_videos):
 
 	print '\n Processed!'
 
+# Classes
+classes = ['biking', 'fighting', 'hand_action', 'running']
+
 # Specifying load paths
-fight_video_load_path = '../ML/fight/'
-noFight_video_load_path = '../ML/noFight/'
+load_paths = ['../ML/'+c+'/' for c in classes]
 
 # Specifying store paths
-fight_video_train_save_path 	= save_directory + 'train/fight/'
-fight_video_test_save_path 		= save_directory + 'test/fight/'
-noFight_video_train_save_path 	= save_directory + 'train/noFight/'
-noFight_video_test_save_path	= save_directory + 'test/noFight/'
+train_save_paths = [save_directory + 'train/'+c+'/' for c in classes]
+test_save_paths = [save_directory + 'test/'+c+'/' for c in classes]
 
 # Specifying no of videos and randomizing them
-input_size = 600
+input_size = 100
+test_size = 10
 input_range = range(1,input_size)
 random.shuffle(input_range)
 
 # Doing the real stuff
-load_fragment_store(fight_video_load_path, fight_video_test_save_path, input_range[input_size-50:])
-load_fragment_store(fight_video_load_path, fight_video_train_save_path, input_range[:input_size-50])
-load_fragment_store(fight_video_load_path, noFight_video_test_save_path, input_range[input_size-50:])
-load_fragment_store(fight_video_load_path, noFight_video_train_save_path, input_range[:input_size-50])
+for i in range(2,len(classes)-1):
+	print(i)
+	load_fragment_store(load_paths[i], test_save_paths[i], input_range[input_size-test_size:])
+	load_fragment_store(load_paths[i], train_save_paths[i], input_range[:input_size-test_size])
